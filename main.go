@@ -2,6 +2,7 @@ package main
 
 import (
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -44,9 +45,9 @@ func checkProcess(w http.ResponseWriter, r *http.Request) {
 
 	cmd := "ps -ef |grep -v " + pid + "| grep -i " + proc + "|grep -v grep"
 	// log.Println(cmd)
-	_, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+	//_, err := exec.Command("sh", "-c", cmd).CombinedOutput()
 
-	// out, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+	out, err := exec.Command("sh", "-c", cmd).CombinedOutput()
 	if err != nil {
 		// log.Println(err)
 		// log.Println(out)
@@ -54,8 +55,8 @@ func checkProcess(w http.ResponseWriter, r *http.Request) {
 		fmt.Fprintln(w, "Process: "+proc+" unavailable")
 		os.Exit(1)
 	}
-	// log.Println(err)
-	// log.Println(string(out))
+	log.Println(err)
+	log.Println(string(out))
 	w.WriteHeader(http.StatusOK)
 	fmt.Fprintln(w, "Healthy")
 }
