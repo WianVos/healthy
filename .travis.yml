@@ -1,0 +1,19 @@
+language: go
+matrix:
+  include:
+  - go: 1.8
+install:
+- make install
+before_deploy:
+- make release
+deploy:
+  provider: releases
+  api_key:
+    secure: Z6NH6a9pee21zhWRV6Qmgb8zZrrcINtLp9SOZdQ1sJ4C/+r2p47g+4XK9TSJZQmIHAWxWEclu+wYgAsBDzupDhAycylVzfC3AY9jh+wdcSEwRAN0VwAsTabloel/zL1mER6fQq+7uoBQpEn/duPtABYxZTMu8I5TPmuMBkjM6xtjyEG1rPPJYDC6BpufwVoMM6hSMZPY1W0/xp4ESQqoJLAFsMqXGxLhlE8ZrIeCerddZr3FvnCo4/sKjApj0zln1UPsikmGiz05IQ6LGh3iJpsMpU2GimZbcap6ClizotsUMyUc7pANZNfGBL/nzyLTMNVE1wq5Ste+atXNq9egdZYtOiCoMwYjVBIUhyck3OINU09tNbVY4x8YNkq2/0rZvkwRJ8Av3tTud10cXgkUab+yGw8M3SHm6jiaa6cSEIOGLIxEOLFnhG/1jbmDim3lrrv7cuUvAFqI/COJx51h2dXvlCmW3elwye6jIIidyG+eDO/LsIheTmVrLu3hPQAImYrZx5LeQtkDmgcEQxxKz4/Uhejv9NgEbCeSW7kWjIMKB0y4qCPa8nGJpYjjLZgqSXxFj1Qf0GxdeBZLf2MQWw+MjDPSB85n0RihhBTZvd3Niiu5G85Grfj/O2oaP2rHZClsVzhHdPfIvf4QXZrfxn33xcdhk0xOUdaydJY4F8Q=
+  file:
+  - release/healthy
+  skip_cleanup: true
+  on:
+    tags: true
+    repo: WianVos/healthy
+
