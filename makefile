@@ -14,8 +14,8 @@ clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf ./release || true
 	mkdir ./release
-	glide update
-
+	glide install
+	
 release: clean linux darwin windows freebsd
 
 # Installs our project: copies binaries

@@ -1,7 +1,10 @@
 language: go
 matrix:
   include:
-  - go: 1.8
+  - go: 1.
+before_install:
+  - mkdir -p "${GOPATH}/bin"
+  - curl https://glide.sh/get | bash
 install:
 - make install
 before_deploy:
