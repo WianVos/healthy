@@ -1,8 +1,8 @@
 package main
 
 import (
+	"encoding/json"
 	"fmt"
-	"log"
 	"net/http"
 	"os"
 	"os/exec"
@@ -25,8 +25,12 @@ var processCmd = &cobra.Command{
 	Run:   monitorProcess,
 }
 
-var port string
-var proc string
+var (
+	port      string
+	proc      string
+	hc        HealthCheck
+	arguments []string
+)
 
 func init() {
 	processCmd.Flags().StringVarP(&port, "port", "p", "18080", "port to run the heatlh check on")
@@ -40,57 +44,138 @@ func main() {
 
 }
 
-func checkProcess(w http.ResponseWriter, r *http.Request, p string) {
+//HealthCheck represents all info needed to execute a health check on the system
+// this struct will get initialized upon first run and used all consecutive runs
+type HealthCheck struct {
+	processes []*process.Process
+}
 
-	pid := strconv.Itoa(os.Getpid())
+func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
+	//now run the healthcheck
+	w.Header().Set("Content-Type", "application/json")
 
-	cmd := "ps -ef |grep -v " + pid + "| grep -i " + p + "|grep -v grep"
-	log.Println(cmd)
-	//_, err := exec.Command("sh", "-c", cmd).CombinedOutput()
+	//if the length of the healthcheck processes is 0 then we have not initialized the health check
+	if len(hc.processes) == 0 {
+		fmt.Println(len(hc.processes))
+		// initialize the healthcheck
+		initHealthCheck(arguments)
+		// if the number of hc.processes is still 0 .. we dies
+		if len(hc.processes) == 0 {
 
-	out, err := exec.Command("sh", "-c", cmd).CombinedOutput()
-	if err != nil {
-		// log.Println(err)
-		// log.Println(out)
+			w.WriteHeader(http.StatusServiceUnavailable)
+			w.Write(getJSONResponse("unable to find process"))
+
+			os.Exit(1)
+			return
+		}
+	}
+	fmt.Println(len(hc.processes))
+
+	// if the healthcheck returns true.. report success
+	if hc.runHealthCheck() {
+
+		w.WriteHeader(http.StatusOK)
+		w.Write(getJSONResponse("Healthy"))
+
+	} else {
+
+		w.Write(getJSONResponse("Dead in the Water"))
 		w.WriteHeader(http.StatusServiceUnavailable)
-		fmt.Fprintln(w, "Process: "+proc+" unavailable")
+
 		os.Exit(1)
+
 	}
-	log.Println(err)
-	log.Println(string(out))
-	w.WriteHeader(http.StatusOK)
-	fmt.Fprintln(w, "Healthy")
 }
 
+//monitorProcess sets up the muxer
 func monitorProcess(cmd *cobra.Command, args []string) {
-	for _, a := range args {
-		fmt.Println(a)
-		findProcessByName(a)
-	}
 
+	// copy the args to a globally declared variable
+	arguments = args
+
+	// setup the router
 	router := mux.NewRouter().StrictSlash(true)
-	//router.HandleFunc("/health", checkProcess, "blah").Methods("GET")
+
+	// add the health route
+	router.HandleFunc("/health", handleHealthCheck).Methods("GET")
+
+	// start the listener
 	http.ListenAndServe(":"+port, router)
+
 }
 
-func findProcessByName(n string) []process.Process {
+//initHealthCheck will initialize the health check upon first run
+func initHealthCheck(gs []string) {
 
-	procs := make([]process.Process, [...])
+	// range over the arguments to healthy
+	for _, g := range gs {
 
-	cmd := "ps -ef |grep -v " + ownPid() + "| grep -i " + n + "|grep -v grep"
+		// compose the grep command
+		cmd := "ps -ef |grep -v " + ownPid() + "| grep -i " + g + "|grep -v grep"
 
-	out, _ := exec.Command("sh", "-c", cmd).Output()
-	s := string(out)
+		//execute the grep command and catch the output .. we are ignoring the stderr here :-)
+		out, _ := exec.Command("sh", "-c", cmd).Output()
 
-	for _, l := range strings.Split(s, "\n") {
-		spid := strings.Split(l, " ")
-		//fmt.Println(pid[3])
-		ipid, _ := strconv.Atoi(spid[2])
-		procs = append(procs, process.NewProcess(int32(ipid)))
+		// convert the output to a string
+		s := string(out)
+
+		// split the output by line and range over the lines
+		for _, l := range strings.Split(s, "\n") {
+			// if we encounter an empty line .. ignore
+			if len(l) != 0 {
+				// split the output line on empty space
+				spid := strings.Split(l, " ")
+				// get the pid
+				ipid, _ := strconv.Atoi(spid[3])
+				// initialize the process object
+				p, err := process.NewProcess(int32(ipid))
+				// error handling
+				if err != nil {
+					fmt.Println(err)
+				}
+
+				//add the process to the health check
+				hc.processes = append(hc.processes, p)
+			}
+		}
+	}
+}
+
+//runHealthCheck returns true if  all the processes in the healthcheck are still alive and kicking
+// guess what happens if they are not
+func (hc *HealthCheck) runHealthCheck() bool {
+
+	// loop over the processes
+	for _, p := range hc.processes {
+		// get the status and act accordingly
+		// if we get an error of the process status is Zombie then we will fail
+		if s, err := p.Status(); err != nil {
+			return false
+		} else if s == "Z" {
+			fmt.Printf("%d has status %s", p.Pid, s)
+			return false
+		}
 	}
 
-} 
+	// all other responses are ok
+	return true
 
+}
+
+//returns the pid for Healthy
 func ownPid() string {
 	return strconv.Itoa(os.Getpid())
+}
+
+//returns a results json object
+func getJSONResponse(s string) []byte {
+	result := struct {
+		Status string
+	}{
+		Status: s,
+	}
+
+	payload, _ := json.Marshal(result)
+
+	return payload
 }
