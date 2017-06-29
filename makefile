@@ -1,5 +1,5 @@
 BINARY=healthy
-VERSION_TAG=`git describe 2>/dev/null | cut -f 1 -d '-' 2>/dev/null`
+VERSION_TAG=`git describe --tags 2>/dev/null | cut -f 1 -d '-' 2>/dev/null`
 COMMIT_HASH=`git rev-parse --short=8 HEAD 2>/dev/null`
 BUILD_TIME=`date +%FT%T%z`
 LDFLAGS=-ldflags "-s -w \
@@ -14,11 +14,13 @@ clean:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf ./release || true
 	mkdir ./release
+	glide update
 
 release: clean linux darwin windows freebsd
 
 # Installs our project: copies binaries
-install:
+install: build
+
 	go install ${LDFLAGS}
 
 build:
@@ -38,8 +40,8 @@ windows:
 	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o ./release/windows_amd64/${BINARY}.exe
 
 freebsd:
-	GOOS=free GOARCH=386 go build ${LDFLAGS} -o ./release/freebsd_386/${BINARY}
-	GOOS=free GOARCH=amd64 go build ${LDFLAGS} -o ./release/freebsd_amd64/${BINARY}
+	GOOS=freebsd GOARCH=386 go build ${LDFLAGS} -o ./release/freebsd_386/${BINARY}
+	GOOS=freebsd GOARCH=amd64 go build ${LDFLAGS} -o ./release/freebsd_amd64/${BINARY}
 
 
 
