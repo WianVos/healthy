@@ -9,19 +9,17 @@ LDFLAGS=-ldflags "-s -w \
 
 all: build
 
+release: clean install linux darwin windows freebsd
+
 clean:
 	go clean
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
 	rm -rf ./release || true
+	
+install: clean
 	mkdir ./release
 	glide install
 	
-release: clean linux darwin windows freebsd
-
-# Installs our project: copies binaries
-install: build
-
-	go install ${LDFLAGS}
 
 build:
 	if [ -f ${BINARY} ] ; then rm ${BINARY} ; fi
