@@ -1,7 +1,5 @@
 package main
 
-
-
 import (
 	"fmt"
 	"log"
@@ -9,8 +7,10 @@ import (
 	"os"
 	"os/exec"
 	"strconv"
+	"strings"
 
 	"github.com/gorilla/mux"
+	"github.com/shirou/gopsutil/process"
 	"github.com/spf13/cobra"
 )
 
@@ -30,7 +30,6 @@ var proc string
 
 func init() {
 	processCmd.Flags().StringVarP(&port, "port", "p", "18080", "port to run the heatlh check on")
-	processCmd.Flags().StringVarP(&proc, "proc", "P", "", "process to check for by name")
 
 	healthy.AddCommand(processCmd)
 }
@@ -41,12 +40,12 @@ func main() {
 
 }
 
-func checkProcess(w http.ResponseWriter, r *http.Request) {
+func checkProcess(w http.ResponseWriter, r *http.Request, p string) {
 
 	pid := strconv.Itoa(os.Getpid())
 
-	cmd := "ps -ef |grep -v " + pid + "| grep -i " + proc + "|grep -v grep"
-	// log.Println(cmd)
+	cmd := "ps -ef |grep -v " + pid + "| grep -i " + p + "|grep -v grep"
+	log.Println(cmd)
 	//_, err := exec.Command("sh", "-c", cmd).CombinedOutput()
 
 	out, err := exec.Command("sh", "-c", cmd).CombinedOutput()
@@ -64,8 +63,34 @@ func checkProcess(w http.ResponseWriter, r *http.Request) {
 }
 
 func monitorProcess(cmd *cobra.Command, args []string) {
+	for _, a := range args {
+		fmt.Println(a)
+		findProcessByName(a)
+	}
 
 	router := mux.NewRouter().StrictSlash(true)
-	router.HandleFunc("/health", checkProcess).Methods("GET")
+	//router.HandleFunc("/health", checkProcess, "blah").Methods("GET")
 	http.ListenAndServe(":"+port, router)
+}
+
+func findProcessByName(n string) []process.Process {
+
+	procs := make([]process.Process, [...])
+
+	cmd := "ps -ef |grep -v " + ownPid() + "| grep -i " + n + "|grep -v grep"
+
+	out, _ := exec.Command("sh", "-c", cmd).Output()
+	s := string(out)
+
+	for _, l := range strings.Split(s, "\n") {
+		spid := strings.Split(l, " ")
+		//fmt.Println(pid[3])
+		ipid, _ := strconv.Atoi(spid[2])
+		procs = append(procs, process.NewProcess(int32(ipid)))
+	}
+
+} 
+
+func ownPid() string {
+	return strconv.Itoa(os.Getpid())
 }
