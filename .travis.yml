@@ -17,6 +17,6 @@ deploy:
   - release/healthy
   skip_cleanup: true
   on:
-    tags: true
+    tags: false
     repo: WianVos/healthy
 
