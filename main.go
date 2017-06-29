@@ -3,11 +3,13 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
 	"net/http"
 	"os"
 	"os/exec"
 	"strconv"
 	"strings"
+	"time"
 
 	"github.com/gorilla/mux"
 	"github.com/shirou/gopsutil/process"
@@ -25,9 +27,20 @@ var processCmd = &cobra.Command{
 	Run:   monitorProcess,
 }
 
+var versionCmd = &cobra.Command{
+	Use:   "version",
+	Short: "displays version information on this happy",
+	Run:   showVersion,
+}
+
 var (
-	port      string
-	proc      string
+	port string
+	proc string
+
+	CommitHash string
+	VersionTag string
+	BuildTime  string
+
 	hc        HealthCheck
 	arguments []string
 )
@@ -35,19 +48,22 @@ var (
 func init() {
 	processCmd.Flags().StringVarP(&port, "port", "p", "18080", "port to run the heatlh check on")
 
+	healthy.AddCommand(versionCmd)
 	healthy.AddCommand(processCmd)
 }
 
 func main() {
-
 	healthy.Execute()
-
 }
 
 //HealthCheck represents all info needed to execute a health check on the system
 // this struct will get initialized upon first run and used all consecutive runs
 type HealthCheck struct {
 	processes []*process.Process
+}
+
+func showVersion(cmd *cobra.Command, args []string) {
+	log.Printf("The version is: %s; the commit hash is: %s. Build time is: %s", VersionTag, CommitHash, parseBuildTime(BuildTime).Format(time.RFC1123))
 }
 
 func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
@@ -178,4 +194,18 @@ func getJSONResponse(s string) []byte {
 	payload, _ := json.Marshal(result)
 
 	return payload
+}
+
+func parseBuildTime(BuildTime string) time.Time {
+	// See https://pauladamsmith.com/blog/2011/05/go_time.html
+	// See https://golang.org/pkg/time/#pkg-constants
+
+	layout := "2006-01-02T15:04:05-0700"
+	t, err := time.Parse(layout, BuildTime)
+
+	if err != nil {
+		log.Println(err)
+	}
+
+	return t
 }
