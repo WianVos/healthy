@@ -21,10 +21,11 @@ var healthy = &cobra.Command{
 }
 
 var processCmd = &cobra.Command{
-	Use:   "process",
-	Short: "monitor linux process",
-	Long:  "monitor a linux process and serve the healthy message as long as this process is up and running", //TODO document the long output,
-	Run:   monitorProcess,
+	Use:     "process",
+	Short:   "monitor linux process. Specify a list of process search parameters as arguments seperated by space",
+	Long:    "monitor a linux process and serve the healthy message as long as this process is up and running", //TODO document the long output,
+	Example: "healthy process docker systemd",
+	Run:     monitorProcess,
 }
 
 var versionCmd = &cobra.Command{
@@ -34,17 +35,21 @@ var versionCmd = &cobra.Command{
 }
 
 var (
-	port string
-	proc string
-
-	CommitHash string
-	VersionTag string
-	BuildTime  string
-
+	port      string
+	proc      string
 	hc        HealthCheck
 	arguments []string
+
+	// the following variables are intended to be set by meanse of commit hash
+	//CommitHash Holds the info about the commit hash
+	CommitHash string
+	//VersionTag indicates which version of the code this binary was built with
+	VersionTag string
+	//BuildTime indicates when this binary was built
+	BuildTime string
 )
 
+//init initializes the spf13/cobra command structure
 func init() {
 	processCmd.Flags().StringVarP(&port, "port", "p", "18080", "port to run the heatlh check on")
 
@@ -52,6 +57,7 @@ func init() {
 	healthy.AddCommand(processCmd)
 }
 
+//main only executes the cobra command
 func main() {
 	healthy.Execute()
 }
@@ -60,6 +66,23 @@ func main() {
 // this struct will get initialized upon first run and used all consecutive runs
 type HealthCheck struct {
 	processes []*process.Process
+}
+
+//monitorProcess sets up the muxer
+func monitorProcess(cmd *cobra.Command, args []string) {
+
+	// copy the args to a globally declared variable
+	arguments = args
+
+	// setup the router
+	router := mux.NewRouter().StrictSlash(true)
+
+	// add the health route
+	router.HandleFunc("/health", handleHealthCheck).Methods("GET")
+
+	// start the listener
+	http.ListenAndServe(":"+port, router)
+
 }
 
 func showVersion(cmd *cobra.Command, args []string) {
@@ -101,23 +124,6 @@ func handleHealthCheck(w http.ResponseWriter, r *http.Request) {
 		os.Exit(1)
 
 	}
-}
-
-//monitorProcess sets up the muxer
-func monitorProcess(cmd *cobra.Command, args []string) {
-
-	// copy the args to a globally declared variable
-	arguments = args
-
-	// setup the router
-	router := mux.NewRouter().StrictSlash(true)
-
-	// add the health route
-	router.HandleFunc("/health", handleHealthCheck).Methods("GET")
-
-	// start the listener
-	http.ListenAndServe(":"+port, router)
-
 }
 
 //initHealthCheck will initialize the health check upon first run
@@ -180,10 +186,12 @@ func (hc *HealthCheck) runHealthCheck() bool {
 
 //returns the pid for Healthy
 func ownPid() string {
+	//os.Getpid returns a integer while we need a string .. hence the Itoa
 	return strconv.Itoa(os.Getpid())
 }
 
 //returns a results json object
+// the input is arbitrary
 func getJSONResponse(s string) []byte {
 	result := struct {
 		Status string
@@ -196,6 +204,7 @@ func getJSONResponse(s string) []byte {
 	return payload
 }
 
+//parseBuildTime parses a unix generated date string into something golang can make pretty with
 func parseBuildTime(BuildTime string) time.Time {
 	// See https://pauladamsmith.com/blog/2011/05/go_time.html
 	// See https://golang.org/pkg/time/#pkg-constants
