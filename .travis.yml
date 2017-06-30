@@ -9,9 +9,9 @@ before_install:
 install:
 - make install
 after_success:
-- |2
-  $(npm bin)/set-up-ssh --key "$encrypted_XXXXXXXXXXXX_key" \
-                        --iv "$encrypted_XXXXXXXXXXXX_iv" \
+- |
+  $(npm bin)/set-up-ssh --key "$encrypted_e64c418b6cf2_key" \
+                        --iv "$encrypted_e64c418b6cf2_iv" \
                         --path-encrypted-key ".travis/github_deploy_key.enc"
 before_deploy:
 - make release
@@ -32,4 +32,4 @@ deploy:
     repo: WianVos/healthy
 GH_USER_EMAIL=wianvos@gmail:
   com:
-    secure: IN+EML93Ra6Kh2ajWKtEKAhvgdqZphyvvoxmsezO4I6fB1EbP3PmRZKmaG6LLLG6R2Mu9z4DOxVgGNvLUVs/BTdpWD89EgcKa67h1upq+IuyfEedWPY+MWPLijBd3rQirtPJA1AjCe2pwNx0Sw0zobY2rsuiKVZJkuvmdYIQqJF9gLyWcfCHYaVQnWUInIM17uByJZkPB2HZaxjS0y2KzbsX9NVRpjvnhsidBSBB13PTdA1IgA7GsvWEJ+wDLxuEE9L+ftPaAGgEfjAvp+1aboDEtZudBjwfF9QhJ8IXLoSZX6msbh3auVD3wzLIDvKnvYTXZQjICcBf5xHX7z1FjZKfBVcJbGeH/bssOvvOy8d6UW7zE4bcViM6LUW5azTzuSb8Ak2FD86Pg83c1JtKaHaOVrYA7nuGgOKstp+FH0Rv/lFUJk2y+SQZbgFuxCwLJIb51SvyFmcmwRK0mfXfmLF3zd8AmX08lKxfZuBMxCRjz8WmtZhUWxgnYHgLAeFJlFPAmFzSh1rRTXS841sp8BMLIfkEqMHA6TUL9rA3+Eje5ZnKI/MAIR67BANZcoKbrDXi8oXFhu46rjp2HVbwWebbqjz4cUj2STlC4I3n3QSnb5KXI3n8o7fgAjV88s4/kpnSvW8iHsy40b0btClT1TUYGmcsHoxPmdThHmiEti0=
+    secure: p4wafITJrfSb92piqqT3IEh4K21NNvewh6g68DjzYN9nzqXKgJEU2+76Xt8N2723FufgO1Ujs9VsvNAlE+syn6pz8En7CAhMKhWTGCh163me+s7aTMIUEB1fB6UVgvkTe4MQ8B5Tbj3Jn7ZZyfTc0zh43XGP6HR7lurXQAzKHNludqItDVykIAvFDQYJ8OBe1B55MBzRgMjEYOHtsv0Wd36yYGSp985wMgqzXko88xVjZ24VWa3bFaypaWEIF/ZWDduBsXimKjOgwg5znDrXMQD+dFYxSrvKg/fkuoQXmXHzqeMKmltQhi+ocgNF70mDvVLjeu+73xZnut7hKSn52CopDv0v8tTELEBPgWP8jJuKMvplHU4aKNhu9IH/CEHV+8NAv9HJ2Va77JHsL44pKPCcCNY2ZNcGIlYbByndkkkkZ6Uzn3KfPDQ6Aa9FXaK7HROXKnp36Csv9kiFIlKaETrXcR65Erqf4ViazmiajZBCN4uWM/AiMFH5mSuel6OHa+AqJx8hzCidc7GEKEYgscbjNjYR3LLOZwdh8E/d8rYVDVK5UlpYjGfN5l/4DZqptmdhgX+uvJvuqXAoQLbS67imY/oQrdww9fT7GKduHZ9PbHLzziErBRihJq8gR3mXxxU9DnrjEQIWdz/ysIaN3nhcql6SX+EhMbSMyAt1YRQ=
