@@ -3,20 +3,16 @@ matrix:
   include:
   - go: 1.8.3
 before_install:
-- openssl aes-256-cbc -K $encrypted_e64c418b6cf2_key -iv $encrypted_e64c418b6cf2_iv -in .travis/github_deploy_key.enc -out .travis/github_deploy_key -d
 - mkdir -p "${GOPATH}/bin"
 - go get github.com/Masterminds/glide
 install:
 - make install
-after_success:
-- |
-  $(npm bin)/set-up-ssh --key "$encrypted_e64c418b6cf2_key" \
-                        --iv "$encrypted_e64c418b6cf2_iv" \
-                        --path-encrypted-key ".travis/github_deploy_key.enc"
 before_deploy:
 - make release
 deploy:
   provider: releases
+  api_key:
+    secure: XiYfMroLaWoH7MoxryYpxwta4kExbt4bOfb2PEOucUnYv7SOIQ3sbrDyUgWhhQUi08R0ImZ3NkbCNdGTUx+IonyQ1kP9hU9T+slxGR48EL5TRRwmkt6rKoTc8eMYfz5hLSFa67YplXl7H0+e8W8ok1WXt6cNbmItnCkojchhXeGdSErS8AHKQx6mmRcLWtKhD1sHrjwHTRwNbeR1bQ/LqWpbxwr0CEXzu1wuT9RaohhLxazLS1z3I03WGFJo8RfQK1EaULiuaRFQFbGA4VyA0SB6w+24USc9URbupM67k3r2TYcGOciVyJfy6sgqqN1MZIdU88hzYJggBvODnjEbHIYrxf2okwZ8C0/3+qCiXU6DSE/cARzqqd4TSICPSVJqwsfppko68MABK655k+SY7bBzH/Ac1MpqV3slClS7HQ/yJdO3MNWemKjMCRZaLjk+RssalhirV1iTopJrj7988hDLAeiQWWPzMd5CXJ/HaYcU8Ke9gd+O+m0WJfFpmwmZR6ChdgAKveNhJfGaUVxO3GK57KPjxadPfp13CBDmPSLCoz0f2GBKadT/fHpFic1HT6QpMogetBAwkEFEiJ5TKacx/ArjOT1KQYBrhXtQO3MG0mHat35BBmVgiGcGaSK6JZl2L2oNudaFRhlAb5pX1bxN2RbA+GokT3AKCY7T9FQ=
   file:
   - release/linux_amd64/healthy
   - release/linux_386/healthy
@@ -30,6 +26,3 @@ deploy:
   on:
     tags: false
     repo: WianVos/healthy
-GH_USER_EMAIL=wianvos@gmail:
-  com:
-    secure: p4wafITJrfSb92piqqT3IEh4K21NNvewh6g68DjzYN9nzqXKgJEU2+76Xt8N2723FufgO1Ujs9VsvNAlE+syn6pz8En7CAhMKhWTGCh163me+s7aTMIUEB1fB6UVgvkTe4MQ8B5Tbj3Jn7ZZyfTc0zh43XGP6HR7lurXQAzKHNludqItDVykIAvFDQYJ8OBe1B55MBzRgMjEYOHtsv0Wd36yYGSp985wMgqzXko88xVjZ24VWa3bFaypaWEIF/ZWDduBsXimKjOgwg5znDrXMQD+dFYxSrvKg/fkuoQXmXHzqeMKmltQhi+ocgNF70mDvVLjeu+73xZnut7hKSn52CopDv0v8tTELEBPgWP8jJuKMvplHU4aKNhu9IH/CEHV+8NAv9HJ2Va77JHsL44pKPCcCNY2ZNcGIlYbByndkkkkZ6Uzn3KfPDQ6Aa9FXaK7HROXKnp36Csv9kiFIlKaETrXcR65Erqf4ViazmiajZBCN4uWM/AiMFH5mSuel6OHa+AqJx8hzCidc7GEKEYgscbjNjYR3LLOZwdh8E/d8rYVDVK5UlpYjGfN5l/4DZqptmdhgX+uvJvuqXAoQLbS67imY/oQrdww9fT7GKduHZ9PbHLzziErBRihJq8gR3mXxxU9DnrjEQIWdz/ysIaN3nhcql6SX+EhMbSMyAt1YRQ=
