@@ -24,7 +24,7 @@ bootstrap: clean bootstrap-gox bootstrap-glide
 	mkdir ./release
 	glide install 
 
-build:
+build: bootstrap
 	go build -o ${BINARY} ${LDFLAGS} 
 
 install: build
@@ -38,11 +38,11 @@ build-all: bootstrap
 	${LDFLAGS} \
 	-output="release/{{.OS}}-{{.Arch}}/{{.Dir}}" 
 
-bootstrap-gox: clean
+bootstrap-gox:
 	go get -u github.com/mitchellh/gox
 	cd ${GOPATH}/src/github.com/mitchellh/gox && go install
 
-bootstrap-glide: clean
+bootstrap-glide:
 	go get -u github.com/Masterminds/glide
 	cd ${GOPATH}/src/github.com/Masterminds/glide && go install
 
