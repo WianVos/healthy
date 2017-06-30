@@ -26,20 +26,19 @@ build:
 	go build -o ${BINARY} ${LDFLAGS}
 
 linux:
-	GOOS=linux GOARCH=386 go build ${LDFLAGS} -o ./release/linux_386/${BINARY}
-	GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ./release/linux_amd64/${BINARY}
+	GOOS=linux GOARCH=386 go build ${LDFLAGS} -o ./release/${BINARY}_linux_386
+	GOOS=linux GOARCH=amd64 go build ${LDFLAGS} -o ./release/${BINARY}_linux_amd64
 
 darwin:
-	GOOS=darwin GOARCH=386 go build ${LDFLAGS} -o ./release/darwin_386/${BINARY}
-	GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o ./release/darwin_amd64/${BINARY}
-
+	GOOS=darwin GOARCH=386 go build ${LDFLAGS} -o ./release/${BINARY}_darwin_386
+	GOOS=darwin GOARCH=amd64 go build ${LDFLAGS} -o ./release/${BINARY}_darwin_amd64
 windows:
-	GOOS=windows GOARCH=386 go build ${LDFLAGS} -o ./release/windows_386/${BINARY}.exe
-	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o ./release/windows_amd64/${BINARY}.exe
+	GOOS=windows GOARCH=386 go build ${LDFLAGS} -o ./release/${BINARY}_windows_386.exe
+	GOOS=windows GOARCH=amd64 go build ${LDFLAGS} -o ./release/${BINARY}_windows_amd64.exe
 
 freebsd:
-	GOOS=freebsd GOARCH=386 go build ${LDFLAGS} -o ./release/freebsd_386/${BINARY}
-	GOOS=freebsd GOARCH=amd64 go build ${LDFLAGS} -o ./release/freebsd_amd64/${BINARY}
+	GOOS=freebsd GOARCH=386 go build ${LDFLAGS} -o ./release/${BINARY}_freebsd_386
+	GOOS=freebsd GOARCH=amd64 go build ${LDFLAGS} -o ./release/${BINARY}_freebsd_amd64
 
 
 

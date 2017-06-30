@@ -14,14 +14,14 @@ deploy:
   api_key:
     secure: XiYfMroLaWoH7MoxryYpxwta4kExbt4bOfb2PEOucUnYv7SOIQ3sbrDyUgWhhQUi08R0ImZ3NkbCNdGTUx+IonyQ1kP9hU9T+slxGR48EL5TRRwmkt6rKoTc8eMYfz5hLSFa67YplXl7H0+e8W8ok1WXt6cNbmItnCkojchhXeGdSErS8AHKQx6mmRcLWtKhD1sHrjwHTRwNbeR1bQ/LqWpbxwr0CEXzu1wuT9RaohhLxazLS1z3I03WGFJo8RfQK1EaULiuaRFQFbGA4VyA0SB6w+24USc9URbupM67k3r2TYcGOciVyJfy6sgqqN1MZIdU88hzYJggBvODnjEbHIYrxf2okwZ8C0/3+qCiXU6DSE/cARzqqd4TSICPSVJqwsfppko68MABK655k+SY7bBzH/Ac1MpqV3slClS7HQ/yJdO3MNWemKjMCRZaLjk+RssalhirV1iTopJrj7988hDLAeiQWWPzMd5CXJ/HaYcU8Ke9gd+O+m0WJfFpmwmZR6ChdgAKveNhJfGaUVxO3GK57KPjxadPfp13CBDmPSLCoz0f2GBKadT/fHpFic1HT6QpMogetBAwkEFEiJ5TKacx/ArjOT1KQYBrhXtQO3MG0mHat35BBmVgiGcGaSK6JZl2L2oNudaFRhlAb5pX1bxN2RbA+GokT3AKCY7T9FQ=
   file:
-  - release/linux_amd64/healthy
-  - release/linux_386/healthy
-  - release/darwin_amd64/healthy
-  - release/darwin_386/healthy
-  - release/freebsd_386/healthy
-  - release/freebsd_amd64/healthy
-  - release/windows_amd64/healthy.exe
-  - release/windows_386/healthy.exe
+  - release/healthy_linux_amd64
+  - release/healthy_linux_386
+  - release/healthy_darwin_amd64
+  - release/healthy_darwin_386
+  - release/healthy_freebsd_386
+  - release/healthy_freebsd_amd64
+  - release/healthy_windows_amd64.exe
+  - release/healthy_windows_386.exe
   skip_cleanup: true
   on:
     tags: false
