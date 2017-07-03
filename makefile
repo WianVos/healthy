@@ -56,7 +56,7 @@ dist: build-all
 	cd ..
 
 
-.PHONY: build all clean release install linux darwin windos freebsd
+.PHONY: all release clean bootstrap build install build-all boostrap-gox bootstrap-glide dist
 
 
 
