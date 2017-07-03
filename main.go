@@ -71,6 +71,10 @@ type HealthCheck struct {
 //monitorProcess sets up the muxer
 func monitorProcess(cmd *cobra.Command, args []string) {
 
+	if len(args) == 0 {
+		fmt.Println("no processes specified.. exiting")
+		os.Exit(1)
+	}
 	// copy the args to a globally declared variable
 	arguments = args
 

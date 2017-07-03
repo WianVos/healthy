@@ -28,5 +28,5 @@ deploy:
   # - release/healthy_windows_386.exe
   skip_cleanup: true
   on:
-    tags: false
+    tags: true
     repo: WianVos/healthy

@@ -34,6 +34,7 @@ install: build
 build-all: bootstrap 
 	gox -verbose  \
 	-os="darwin linux freebsd windows" \
+	-cgo \
 	-arch="amd64" \
 	${LDFLAGS} \
 	-output="release/{{.OS}}-{{.Arch}}/{{.Dir}}" 
