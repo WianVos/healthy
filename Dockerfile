@@ -1,5 +1,9 @@
-FROM alpine:3.6
+FROM golang:1.8.3
 
-ADD https://github.com/WianVos/healthy/releases/download/untagged-e3be289d9a955edbf5f3/healthy-untagged-linux-amd64.zip /tmp
-RUN unzip /tmp/healthy-untagged-linux-amd64.zip 
+WORKDIR /go/src/app
+COPY . .
 
+RUN go-wrapper download   # "go get -d -v ./..."
+RUN go-wrapper install    # "go install -v ./..."
+
+CMD ["go-wrapper", "run"] # ["healthy"]
